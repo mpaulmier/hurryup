@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "HurryUp Youtube Extension",
+    "version": "0.1",
+    "description": "Displays the actual video's length taking playback rate into account.",
+    "permissions": ["storage"],
+    "host_permissions": ["https://*.youtube.com/*"],
+    "content_scripts": [
+        {
+            "matches": ["https://www.youtube.com/*"],
+            "js": ["content.js"],
+            "css": ["styles.css"],
+            "run_at": "document_idle"
+        }
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "icons": {
+        "96": "assets/images/icon_96.png",
+        "48": "assets/images/icon_48.png",
+        "32": "assets/images/icon_32.png",
+        "16": "assets/images/icon_16.png"
+    }
+}
