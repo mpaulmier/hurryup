@@ -5,13 +5,15 @@
 
 HurryUp is a small browser extension for displaying the actual duration of a video, taking into account the playback rate set by the user.
 
+This extension is compatible with [SponsorBlock](https://github.com/ajayyy/SponsorBlock "SponsorBlock") which means that the calculated time will take into account the truncated sponsored part.
+
 ![Demo of HurryUp](./assets/images/demo.png "Demo of HurryUp")
 
 ## Roadmap
 
 These are the things I'd like to add to this extension in no particular order:
 
-* [ ] Add compatibility with [SponsorBlock](https://github.com/ajayyy/SponsorBlock "SponsorBlock") so that the time without sponsors is taken into account
+* [x] Add compatibility with [SponsorBlock](https://github.com/ajayyy/SponsorBlock "SponsorBlock") so that the time without sponsors is taken into account
 * [ ] Add an option to display the calculated time on the thumbnail
   * [ ] Add a configuration for selected a prefered playback rate for thumbnails
 * [ ] Add calculated current time in the video

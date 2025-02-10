@@ -39,13 +39,34 @@ const convertToHumanReadableTime = (time) => {
     return nums.join(":")
 }
 
+const getSponsorBlockDuration = element => {
+    // factors for each element [ seconds, minutes, hours ]
+    const timeMapping = [ 1, 60, 3600 ]
+    const [_, timeStr] = element
+          .textContent
+          .match(/\ \((.*)\)/)
+    // split into [ seconds, minutes, hours ]
+    const timeElems = timeStr.split(":").map(Number).reverse()
+    return timeElems.reduce((acc, elem, idx) => acc + elem * timeMapping[idx], 0)
+}
+
 const updateTime = (video, rate) => {
     clear()
-    if (rate == 1) return
 
     const element = document.getElementsByClassName("ytp-time-wrapper")[0]
 
-    const newDuration = video.duration / rate
+    let duration = video.duration
+    const spbElem = document.getElementById("sponsorBlockDurationAfterSkips")
+    if (rate != 1 && !!spbElem && !!spbElem.textContent) {
+        duration = getSponsorBlockDuration(spbElem)
+        spbElem.style.display = "none"
+    } else if (!!spbElem) {
+        spbElem.style.display = "inline"
+    }
+
+    if (rate == 1) return
+
+    const newDuration = duration / rate
     const newDurationText = convertToHumanReadableTime(newDuration)
 
     const newCurrentTime = video.currentTime / rate
