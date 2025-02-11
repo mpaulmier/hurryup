@@ -15,7 +15,9 @@ These are the things I'd like to add to this extension in no particular order:
 
 * [x] Add compatibility with [SponsorBlock](https://github.com/ajayyy/SponsorBlock "SponsorBlock") so that the time without sponsors is taken into account
 * [ ] Add an option to display the calculated time on the thumbnail
-  * [ ] Add a configuration for selected a prefered playback rate for thumbnails
+* [ ] Add a configuration popup
+  * [ ] Add a configuration option for selecting a prefered playback rate for thumbnails
+  * [ ] Add a configuration option for personalizing the text displayed in the player
 * [ ] Add calculated current time in the video
 
 If you think of a feature that would fit this project, don't hesitate to open an issue on github and I'll review it.
