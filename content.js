@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-const pad = num => num
+const pad = (num) => num
       .toFixed()
       .padStart(2, 0)
 
@@ -39,7 +39,7 @@ const convertToHumanReadableTime = (time) => {
     return nums.join(":")
 }
 
-const getSponsorBlockDuration = element => {
+const getSponsorBlockDuration = (element) => {
     // factors for each element [ seconds, minutes, hours ]
     const timeMapping = [ 1, 60, 3600 ]
     const [_, timeStr] = element
@@ -90,16 +90,12 @@ const updateSpeed = () => {
     })
 }
 
-const startListening = () => {
-    setTimeout(updateSpeed, 2000) // Wait for YouTube to load
-}
-
 browser.runtime.onMessage.addListener((obj, _sender, _response) => {
     const { type } = obj
     clear()
 
     if (type === "NEW") {
-        startListening()
+        setTimeout(updateSpeed, 2000) // Wait for YouTube to load
     }
 })
 
