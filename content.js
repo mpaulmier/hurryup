@@ -69,9 +69,6 @@ const updateTime = (video, rate) => {
     const newDuration = duration / rate
     const newDurationText = convertToHumanReadableTime(newDuration)
 
-    const newCurrentTime = video.currentTime / rate
-    const newCurrentTimeText = convertToHumanReadableTime(newCurrentTime)
-
     const newElement = document.createElement("span")
     newElement.id = "hurryup-updated-time"
     newElement.textContent = ` (x${rate} => ${newDurationText})`
