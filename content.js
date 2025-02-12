@@ -50,9 +50,10 @@ const getSponsorBlockDuration = (element) => {
     return timeElems.reduce((acc, elem, idx) => acc + elem * timeMapping[idx], 0)
 }
 
-const updateTime = (video, rate) => {
+const updateDuration = (video) => {
     clear()
 
+    const rate = video.playbackRate.toFixed(2)
     const element = document.getElementsByClassName("ytp-time-wrapper")[0]
 
     let duration = video.duration
@@ -78,12 +79,10 @@ const updateTime = (video, rate) => {
 const updateSpeed = () => {
     const video = document.querySelector("video")
     if (!video) return
-    const initialRate = video.playbackRate
-    updateTime(video, initialRate)
+    updateDuration(video)
 
     video.addEventListener("ratechange", () => {
-        const newRate = video.playbackRate.toFixed(2)
-        updateTime(video, newRate)
+        updateDuration(video)
     })
 }
 
