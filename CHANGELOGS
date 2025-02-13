@@ -1,5 +1,6 @@
 * Version 0.3
 
+- fd68073: Add an options menu with 2 settings to enable or disable display of current time and playback rate
 - 82f63dd: Compute and display current time according to playback rate
 
 * Version 0.2.1
