@@ -3,7 +3,14 @@
     "name": "HurryUp Youtube Extension",
     "version": "0.2.1",
     "description": "Displays the actual video's length taking playback rate into account.",
-    "permissions": ["storage"],
+    "options_ui": {
+        "page": "options/options.html"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage"
+    ],
     "host_permissions": ["https://*.youtube.com/*"],
     "content_scripts": [
         {

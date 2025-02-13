@@ -13,12 +13,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-let video
+const options = {
+    showCurrentTime: null,
+    showRate: null,
+}
+
+let video,
+    showCurrentTime,
+    showRate
 
 const hideSpbContainerMaybe = (rate) => {
     const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
     if (rate != 1 && !!spbElem && !!spbElem.textContent) {
-        duration = getSponsorBlockDuration(spbElem)
+        duration = getSpbDuration(spbElem)
         spbElem.style.display = 'none'
     } else if (!!spbElem) {
         spbElem.style.display = 'inline'
@@ -95,11 +102,16 @@ const show = () => {
     const ytTimeElement = document.getElementsByClassName('ytp-time-wrapper')[0]
     const newElement = document.createElement('span')
     newElement.id = 'hurryup-text-container'
-    newElement.append(' (x')
-    newElement.appendChild(containers.rate)
-    newElement.append(' → ')
-    newElement.appendChild(containers.currentTime)
-    newElement.append(' / ')
+    newElement.append(' (')
+    if (options.showRate) {
+        newElement.append('x')
+        newElement.appendChild(containers.rate)
+        newElement.append(' → ')
+    }
+    if (options.showCurrentTime) {
+        newElement.appendChild(containers.currentTime)
+        newElement.append(' / ')
+    }
     newElement.appendChild(containers.duration)
     newElement.append(')')
     ytTimeElement.appendChild(newElement)
@@ -124,10 +136,23 @@ const onTick = () => {
     updateCurrentTime()
 }
 
+const loadOptions = () => {
+    const optionKeys = Object.keys(options)
+    return browser.storage.local.get(optionKeys, (result) => {
+        optionKeys.forEach((key) => {
+            options[key] = !!result[key]
+        })
+        clearAll()
+        const rate = video.playbackRate.toFixed(2)
+        if (rate != 1) show()
+    })
+}
+
 const init = () => {
     video = document.querySelector('video')
     if (!video) return
     clearAll()
+    loadOptions()
     onRateChange()
 
     video.addEventListener('ratechange', onRateChange)
@@ -140,6 +165,8 @@ browser.runtime.onMessage.addListener((obj, _sender, _response) => {
 
     if (type === 'videoPageLoaded') {
         setTimeout(init, 2000) // Wait for YouTube to load
+    } else if (type === 'optionsUpdated') {
+        loadOptions()
     }
 })
 
