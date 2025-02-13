@@ -47,9 +47,11 @@ const createElement = (id) => {
 const containers = {
     rate: createElement('hurryup-rate-container'),
     duration: createElement('hurryup-duration-container'),
+    currentTime: createElement('hurryup-current-time-container')
 }
 
 const clearAll = () => {
+    hideSpbContainerMaybe(video.playbackRate)
     const oldContainer = document.getElementById('hurryup-text-container')
     if (!!oldContainer) oldContainer.remove()
 }
@@ -74,6 +76,7 @@ const convertToHumanReadableTime = (time) => {
 const onRateChange = () => {
     const rate = video.playbackRate.toFixed(2)
     const duration = getSpbDuration() || video.duration
+    clearAll()
 
     if (rate == 1) return
 
@@ -84,6 +87,8 @@ const onRateChange = () => {
     const newDurationText = convertToHumanReadableTime(newDuration)
 
     containers.duration.textContent = newDurationText
+    updateCurrentTime()
+    show()
 }
 
 const show = () => {
@@ -93,22 +98,36 @@ const show = () => {
     newElement.append(' (x')
     newElement.appendChild(containers.rate)
     newElement.append(' → ')
+    newElement.appendChild(containers.currentTime)
+    newElement.append(' / ')
     newElement.appendChild(containers.duration)
     newElement.append(')')
     ytTimeElement.appendChild(newElement)
 }
 
+const updateCurrentTime = () => {
+    const rate = video.playbackRate.toFixed(2)
+    const currentTime = video.currentTime
+
+    if (rate == 1) return
+
+    hideSpbContainerMaybe(rate)
+    containers.rate.textContent = rate
+
+    const newCurrentTime = currentTime / rate
+    const newCurrentTimeText = convertToHumanReadableTime(newCurrentTime)
+
+    containers.currentTime.textContent = newCurrentTimeText
+}
+
 const onTick = () => {
-    clearAll()
-    if (video.playbackRate != 1)
-        show()
+    updateCurrentTime()
 }
 
 const init = () => {
     video = document.querySelector('video')
     if (!video) return
     clearAll()
-    hideSpbContainerMaybe(video.playbackRate)
     onRateChange()
 
     video.addEventListener('ratechange', onRateChange)
