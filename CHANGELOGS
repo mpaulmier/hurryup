@@ -1,3 +1,7 @@
+* Version 0.3
+
+- 82f63dd: Compute and display current time according to playback rate
+
 * Version 0.2.1
 
 - Just a bugfix and refactor version
