@@ -14,11 +14,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === "complete" && tab.url && tab.url.includes("youtube.com/watch")) {
-        const queryParameters = tab.url.split("?")[1];
+    if (changeInfo.status === 'complete' && tab.url && tab.url.includes('youtube.com/watch')) {
+        const queryParameters = tab.url.split('?')[1];
         const urlParameters = new URLSearchParams(queryParameters);
         browser.tabs.sendMessage(tabId, {
-            type: "NEW",
+            type: 'videoPageLoaded',
         });
     }
 });

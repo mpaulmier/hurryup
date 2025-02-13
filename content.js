@@ -13,13 +13,45 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-const pad = (num) => num
-      .toFixed()
-      .padStart(2, 0)
+let video
 
-const clear = () => {
-    const oldUpdatedTime = document.getElementById("hurryup-updated-time")
-    if (!!oldUpdatedTime) oldUpdatedTime.remove()
+const hideSpbContainerMaybe = (rate) => {
+    const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
+    if (rate != 1 && !!spbElem && !!spbElem.textContent) {
+        duration = getSponsorBlockDuration(spbElem)
+        spbElem.style.display = 'none'
+    } else if (!!spbElem) {
+        spbElem.style.display = 'inline'
+    }
+}
+
+const getSpbDuration = () => {
+    // factors for each element [ seconds, minutes, hours ]
+    const timeMapping = [1, 60, 3600]
+
+    const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
+    if (!spbElem || !spbElem.textContent) return null
+    const [_, timeStr] = spbElem.textContent.match(/\ \((.*)\)/)
+
+    // split and reverse into [ seconds, minutes, hours ]
+    const timeElems = timeStr.split(':').map(Number).reverse()
+    return timeElems.reduce((acc, elem, idx) => acc + elem * timeMapping[idx], 0)
+}
+
+const createElement = (id) => {
+    const elem = document.createElement('span')
+    elem.id = id
+    return elem
+}
+
+const containers = {
+    rate: createElement('hurryup-rate-container'),
+    duration: createElement('hurryup-duration-container'),
+}
+
+const clearAll = () => {
+    const oldContainer = document.getElementById('hurryup-text-container')
+    if (!!oldContainer) oldContainer.remove()
 }
 
 const convertToHumanReadableTime = (time) => {
@@ -32,66 +64,63 @@ const convertToHumanReadableTime = (time) => {
     let nums = []
     if (!!hours) {
         nums.push(hours)
-        minutes = pad(minutes)
+        minutes = minutes.toFixed().padStart(2, 0)
     }
     nums.push(minutes)
-    nums.push(pad(seconds))
-    return nums.join(":")
+    nums.push(seconds.toFixed().padStart(2, 0))
+    return nums.join(':')
 }
 
-const getSponsorBlockDuration = (element) => {
-    // factors for each element [ seconds, minutes, hours ]
-    const timeMapping = [ 1, 60, 3600 ]
-    const [_, timeStr] = element
-          .textContent
-          .match(/\ \((.*)\)/)
-    // split into [ seconds, minutes, hours ]
-    const timeElems = timeStr.split(":").map(Number).reverse()
-    return timeElems.reduce((acc, elem, idx) => acc + elem * timeMapping[idx], 0)
-}
-
-const updateDuration = (video) => {
-    clear()
-
+const onRateChange = () => {
     const rate = video.playbackRate.toFixed(2)
-    const element = document.getElementsByClassName("ytp-time-wrapper")[0]
-
-    let duration = video.duration
-    const spbElem = document.getElementById("sponsorBlockDurationAfterSkips")
-    if (rate != 1 && !!spbElem && !!spbElem.textContent) {
-        duration = getSponsorBlockDuration(spbElem)
-        spbElem.style.display = "none"
-    } else if (!!spbElem) {
-        spbElem.style.display = "inline"
-    }
+    const duration = getSpbDuration() || video.duration
 
     if (rate == 1) return
+
+    hideSpbContainerMaybe(rate)
+    containers.rate.textContent = rate
 
     const newDuration = duration / rate
     const newDurationText = convertToHumanReadableTime(newDuration)
 
-    const newElement = document.createElement("span")
-    newElement.id = "hurryup-updated-time"
-    newElement.textContent = ` (x${rate} => ${newDurationText})`
-    element.appendChild(newElement)
+    containers.duration.textContent = newDurationText
 }
 
-const updateSpeed = () => {
-    const video = document.querySelector("video")
-    if (!video) return
-    updateDuration(video)
+const show = () => {
+    const ytTimeElement = document.getElementsByClassName('ytp-time-wrapper')[0]
+    const newElement = document.createElement('span')
+    newElement.id = 'hurryup-text-container'
+    newElement.append(' (x')
+    newElement.appendChild(containers.rate)
+    newElement.append(' → ')
+    newElement.appendChild(containers.duration)
+    newElement.append(')')
+    ytTimeElement.appendChild(newElement)
+}
 
-    video.addEventListener("ratechange", () => {
-        updateDuration(video)
-    })
+const onTick = () => {
+    clearAll()
+    if (video.playbackRate != 1)
+        show()
+}
+
+const init = () => {
+    video = document.querySelector('video')
+    if (!video) return
+    clearAll()
+    hideSpbContainerMaybe(video.playbackRate)
+    onRateChange()
+
+    video.addEventListener('ratechange', onRateChange)
+
+    setInterval(onTick, 500)
 }
 
 browser.runtime.onMessage.addListener((obj, _sender, _response) => {
     const { type } = obj
-    clear()
 
-    if (type === "NEW") {
-        setTimeout(updateSpeed, 2000) // Wait for YouTube to load
+    if (type === 'videoPageLoaded') {
+        setTimeout(init, 2000) // Wait for YouTube to load
     }
 })
 
