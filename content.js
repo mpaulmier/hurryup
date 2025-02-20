@@ -20,7 +20,8 @@ const options = {
 
 let video,
     showCurrentTime,
-    showRate
+    showRate,
+    globalInterval
 
 const hideSpbContainerMaybe = (rate) => {
     const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
@@ -85,7 +86,12 @@ const onRateChange = () => {
     const duration = getSpbDuration() || video.duration
     clearAll()
 
-    if (rate == 1) return
+    if (rate == 1) {
+        clearGlobalInterval()
+        return
+    } else if (!globalInterval && !video.paused) {
+        startTicking()
+    }
 
     hideSpbContainerMaybe(rate)
     containers.rate.textContent = rate
@@ -148,6 +154,16 @@ const loadOptions = () => {
     })
 }
 
+const startTicking = () => {
+    if (!globalInterval && video.playbackRate !== 1)
+        globalInterval = setInterval(onTick, 500)
+}
+
+const clearGlobalInterval = () => {
+    clearInterval(globalInterval)
+    globalInterval = null
+}
+
 const init = () => {
     video = document.querySelector('video')
     if (!video) return
@@ -156,8 +172,9 @@ const init = () => {
     onRateChange()
 
     video.addEventListener('ratechange', onRateChange)
-
-    setInterval(onTick, 500)
+    video.addEventListener('play', startTicking)
+    video.addEventListener('playing', startTicking)
+    video.addEventListener('pause', clearGlobalInterval)
 }
 
 browser.runtime.onMessage.addListener((obj, _sender, _response) => {
@@ -169,4 +186,3 @@ browser.runtime.onMessage.addListener((obj, _sender, _response) => {
         loadOptions()
     }
 })
-
