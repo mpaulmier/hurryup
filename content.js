@@ -16,6 +16,7 @@
 const options = {
     showCurrentTime: null,
     showRate: null,
+    showRemainingTime: null,
 }
 
 let video,
@@ -55,7 +56,8 @@ const createElement = (id) => {
 const containers = {
     rate: createElement('hurryup-rate-container'),
     duration: createElement('hurryup-duration-container'),
-    currentTime: createElement('hurryup-current-time-container')
+    currentTime: createElement('hurryup-current-time-container'),
+    remainingTime: createElement('hurryup-remaining-time-container'),
 }
 
 const clearAll = () => {
@@ -118,18 +120,16 @@ const show = () => {
         newElement.appendChild(containers.currentTime)
         newElement.append(' / ')
     }
-    newElement.appendChild(containers.duration)
+    if (options.showRemainingTime) {
+        newElement.appendChild(containers.remainingTime)
+    } else {
+        newElement.appendChild(containers.duration)
+    }
     newElement.append(')')
     ytTimeElement.appendChild(newElement)
 }
 
-const updateCurrentTime = () => {
-    const rate = video.playbackRate.toFixed(2)
-    const currentTime = video.currentTime
-
-    if (rate == 1) return
-
-    hideSpbContainerMaybe(rate)
+const updateCurrentTime = (rate, currentTime) => {
     containers.rate.textContent = rate
 
     const newCurrentTime = currentTime / rate
@@ -138,8 +138,25 @@ const updateCurrentTime = () => {
     containers.currentTime.textContent = newCurrentTimeText
 }
 
+const updateRemainingTime = (rate, currentTime) => {
+    const duration = getSpbDuration() || video.duration
+    const newDuration = duration / rate
+
+    const newCurrentTime = currentTime / rate
+    const newCurrentTimeText = convertToHumanReadableTime(newCurrentTime)
+
+    const remainingTime = newDuration - newCurrentTime
+    const remainingTimeText = convertToHumanReadableTime(remainingTime)
+
+    containers.remainingTime.textContent = remainingTimeText
+}
+
 const onTick = () => {
-    updateCurrentTime()
+    const rate = video.playbackRate.toFixed(2)
+    const currentTime = video.currentTime
+
+    updateCurrentTime(rate, currentTime)
+    updateRemainingTime(rate, currentTime)
 }
 
 const loadOptions = () => {
@@ -149,8 +166,7 @@ const loadOptions = () => {
             options[key] = !!result[key]
         })
         clearAll()
-        const rate = video.playbackRate.toFixed(2)
-        if (rate != 1) show()
+        if (video.playbackRate != 1) show()
     })
 }
 
