@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "HurryUp Youtube Extension",
-    "version": "0.3",
+    "version": "0.4",
     "description": "Displays the actual video's length taking playback rate into account.",
     "options_ui": {
         "page": "options/options.html"
