@@ -137,10 +137,6 @@ const updateCurrentTime = (rate, actualCurrentTime) => {
 }
 
 const updateRemainingTime = (rate, actualCurrentTime, actualDuration) => {
-    console.debug({
-        actualCurrentTime,
-        actualDuration,
-    })
     const remainingTime = actualDuration - actualCurrentTime
     const remainingTimeText = convertToHumanReadableTime(remainingTime)
 
