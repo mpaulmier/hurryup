@@ -131,13 +131,16 @@ const show = () => {
 
 const updateCurrentTime = (rate, actualCurrentTime) => {
     containers.rate.textContent = rate
-
     const actualCurrentTimeText = convertToHumanReadableTime(actualCurrentTime)
 
     containers.currentTime.textContent = actualCurrentTimeText
 }
 
 const updateRemainingTime = (rate, actualCurrentTime, actualDuration) => {
+    console.debug({
+        actualCurrentTime,
+        actualDuration,
+    })
     const remainingTime = actualDuration - actualCurrentTime
     const remainingTimeText = convertToHumanReadableTime(remainingTime)
 
@@ -147,11 +150,12 @@ const updateRemainingTime = (rate, actualCurrentTime, actualDuration) => {
 const onTick = () => {
     const rate = video.playbackRate.toFixed(2)
     const currentTime = Math.trunc(video.currentTime)
+    const actualCurrentTime = Math.trunc(currentTime / rate)
     const duration = getSpbDuration() || Math.trunc(video.duration)
     const actualDuration = Math.trunc(duration / rate)
 
-    updateCurrentTime(rate, actualCurrentTime, actualDuration)
-    updateRemainingTime(rate, actualCurrentTime)
+    updateCurrentTime(rate, actualCurrentTime)
+    updateRemainingTime(rate, actualCurrentTime, actualDuration)
 }
 
 const loadOptions = () => {
