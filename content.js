@@ -91,8 +91,6 @@ const onRateChange = () => {
     if (rate == 1) {
         clearGlobalInterval()
         return
-    } else if (!globalInterval && !video.paused) {
-        startTicking()
     }
 
     hideSpbContainerMaybe(rate)
@@ -145,9 +143,9 @@ const updateRemainingTime = (rate, actualCurrentTime, actualDuration) => {
 
 const onTick = () => {
     const rate = video.playbackRate.toFixed(2)
-    const currentTime = Math.trunc(video.currentTime)
+    const currentTime = video.currentTime
     const actualCurrentTime = Math.trunc(currentTime / rate)
-    const duration = getSpbDuration() || Math.trunc(video.duration)
+    const duration = getSpbDuration() || video.duration
     const actualDuration = Math.trunc(duration / rate)
 
     updateCurrentTime(rate, actualCurrentTime)
@@ -165,11 +163,6 @@ const loadOptions = () => {
     })
 }
 
-const startTicking = () => {
-    if (!globalInterval && video.playbackRate !== 1)
-        globalInterval = setInterval(onTick, 500)
-}
-
 const clearGlobalInterval = () => {
     clearInterval(globalInterval)
     globalInterval = null
@@ -183,9 +176,7 @@ const init = () => {
     onRateChange()
 
     video.addEventListener('ratechange', onRateChange)
-    video.addEventListener('play', startTicking)
-    video.addEventListener('playing', startTicking)
-    video.addEventListener('pause', clearGlobalInterval)
+    video.addEventListener('timeupdate', onTick)
 }
 
 browser.runtime.onMessage.addListener((obj, _sender, _response) => {
