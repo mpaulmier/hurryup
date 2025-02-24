@@ -1,3 +1,8 @@
+* Version 0.4.2
+
+- 2900100 - Improve time update to display more often
+- 14c5657 - Remove debug to console
+
 * Version 0.4.1
 
 - 4db2bc9 - Fix a bug where NaN is always displayed instead of times
