@@ -129,23 +129,16 @@ const show = () => {
     ytTimeElement.appendChild(newElement)
 }
 
-const updateCurrentTime = (rate, currentTime) => {
+const updateCurrentTime = (rate, actualCurrentTime) => {
     containers.rate.textContent = rate
 
-    const newCurrentTime = currentTime / rate
-    const newCurrentTimeText = convertToHumanReadableTime(newCurrentTime)
+    const actualCurrentTimeText = convertToHumanReadableTime(actualCurrentTime)
 
-    containers.currentTime.textContent = newCurrentTimeText
+    containers.currentTime.textContent = actualCurrentTimeText
 }
 
-const updateRemainingTime = (rate, currentTime) => {
-    const duration = getSpbDuration() || video.duration
-    const newDuration = duration / rate
-
-    const newCurrentTime = currentTime / rate
-    const newCurrentTimeText = convertToHumanReadableTime(newCurrentTime)
-
-    const remainingTime = newDuration - newCurrentTime
+const updateRemainingTime = (rate, actualCurrentTime, actualDuration) => {
+    const remainingTime = actualDuration - actualCurrentTime
     const remainingTimeText = convertToHumanReadableTime(remainingTime)
 
     containers.remainingTime.textContent = remainingTimeText
@@ -153,10 +146,12 @@ const updateRemainingTime = (rate, currentTime) => {
 
 const onTick = () => {
     const rate = video.playbackRate.toFixed(2)
-    const currentTime = video.currentTime
+    const currentTime = Math.trunc(video.currentTime)
+    const duration = getSpbDuration() || Math.trunc(video.duration)
+    const actualDuration = Math.trunc(duration / rate)
 
-    updateCurrentTime(rate, currentTime)
-    updateRemainingTime(rate, currentTime)
+    updateCurrentTime(rate, actualCurrentTime, actualDuration)
+    updateRemainingTime(rate, actualCurrentTime)
 }
 
 const loadOptions = () => {
