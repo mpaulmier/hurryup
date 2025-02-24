@@ -1,3 +1,7 @@
+* Version 0.4.1
+
+- 4db2bc9 - Fix a bug where NaN is always displayed instead of times
+
 * Version 0.4
 
 - 5a878b3-bf9314f: Add an option to display the remaining time
