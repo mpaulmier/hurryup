@@ -1,3 +1,7 @@
+* Version 0.4
+
+- 5a878b3-bf9314f: Add an option to display the remaining time
+
 * Version 0.3
 
 - fd68073: Add an options menu with 2 settings to enable or disable display of current time and playback rate
