@@ -14,9 +14,48 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    width: 500px;
 }
 
 label {
     display: block;
     margin: 10px 0;
+}
+
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+#player-container {
+    font-family: sans-serif;
+    font-size: .75rem;
+    background-color: black;
+    width: 80%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+}
+
+#timeline {
+    border-top: 3px solid red;
+    width: 80%;
+    margin: auto;
+}
+
+#time-container {
+    color: white;
+    line-height: 40px;
+}
+
+path {
+    height: 40px;
+    fill: white;
 }
