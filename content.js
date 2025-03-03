@@ -24,7 +24,14 @@ let video,
     showRate,
     globalInterval
 
-const hideSpbContainerMaybe = (rate) => {
+const containers = {
+    rate: createElement('hurryup-rate-container'),
+    duration: createElement('hurryup-duration-container'),
+    currentTime: createElement('hurryup-current-time-container'),
+    remainingTime: createElement('hurryup-remaining-time-container'),
+}
+
+function hideSpbContainerMaybe(rate) {
     const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
     if (rate != 1 && !!spbElem && !!spbElem.textContent) {
         duration = getSpbDuration(spbElem)
@@ -34,7 +41,7 @@ const hideSpbContainerMaybe = (rate) => {
     }
 }
 
-const getSpbDuration = () => {
+function getSpbDuration() {
     // factors for each element [ seconds, minutes, hours ]
     const timeMapping = [1, 60, 3600]
 
@@ -47,26 +54,19 @@ const getSpbDuration = () => {
     return timeElems.reduce((acc, elem, idx) => acc + elem * timeMapping[idx], 0)
 }
 
-const createElement = (id) => {
+function createElement(id) {
     const elem = document.createElement('span')
     elem.id = id
     return elem
 }
 
-const containers = {
-    rate: createElement('hurryup-rate-container'),
-    duration: createElement('hurryup-duration-container'),
-    currentTime: createElement('hurryup-current-time-container'),
-    remainingTime: createElement('hurryup-remaining-time-container'),
-}
-
-const clearAll = () => {
+function clearAll() {
     hideSpbContainerMaybe(video.playbackRate)
     const oldContainer = document.getElementById('hurryup-text-container')
     if (!!oldContainer) oldContainer.remove()
 }
 
-const convertToHumanReadableTime = (time) => {
+function convertToHumanReadableTime(time) {
     let rest = time
     const hours = Math.floor(time / 3600)
     rest = rest % 3600
@@ -83,7 +83,7 @@ const convertToHumanReadableTime = (time) => {
     return nums.join(':')
 }
 
-const onRateChange = () => {
+function onRateChange() {
     const rate = video.playbackRate.toFixed(2)
     const duration = getSpbDuration() || video.duration
     clearAll()
@@ -100,11 +100,10 @@ const onRateChange = () => {
     const newDurationText = convertToHumanReadableTime(newDuration)
 
     containers.duration.textContent = newDurationText
-    updateCurrentTime()
     show()
 }
 
-const show = () => {
+function show() {
     const ytTimeElement = document.getElementsByClassName('ytp-time-wrapper')[0]
     const newElement = document.createElement('span')
     newElement.id = 'hurryup-text-container'
@@ -127,32 +126,20 @@ const show = () => {
     ytTimeElement.appendChild(newElement)
 }
 
-const updateCurrentTime = (rate, actualCurrentTime) => {
-    containers.rate.textContent = rate
+function updateCurrentTime(actualCurrentTime) {
     const actualCurrentTimeText = convertToHumanReadableTime(actualCurrentTime)
 
     containers.currentTime.textContent = actualCurrentTimeText
 }
 
-const updateRemainingTime = (rate, actualCurrentTime, actualDuration) => {
+function updateRemainingTime(actualCurrentTime, actualDuration) {
     const remainingTime = actualDuration - actualCurrentTime
     const remainingTimeText = convertToHumanReadableTime(remainingTime)
 
     containers.remainingTime.textContent = remainingTimeText
 }
 
-const onTick = () => {
-    const rate = video.playbackRate.toFixed(2)
-    const currentTime = video.currentTime
-    const actualCurrentTime = Math.trunc(currentTime / rate)
-    const duration = getSpbDuration() || video.duration
-    const actualDuration = Math.trunc(duration / rate)
-
-    updateCurrentTime(rate, actualCurrentTime)
-    updateRemainingTime(rate, actualCurrentTime, actualDuration)
-}
-
-const loadOptions = () => {
+function loadOptions() {
     const optionKeys = Object.keys(options)
     return browser.storage.local.get(optionKeys, (result) => {
         optionKeys.forEach((key) => {
@@ -163,12 +150,12 @@ const loadOptions = () => {
     })
 }
 
-const clearGlobalInterval = () => {
+function clearGlobalInterval() {
     clearInterval(globalInterval)
     globalInterval = null
 }
 
-const init = () => {
+function init() {
     video = document.querySelector('video')
     if (!video) return
     clearAll()
@@ -176,6 +163,17 @@ const init = () => {
     onRateChange()
 
     video.addEventListener('ratechange', onRateChange)
+
+    const onTick = () => {
+        const rate = video.playbackRate.toFixed(2)
+        const currentTime = video.currentTime
+        const actualCurrentTime = Math.trunc(currentTime / rate)
+        const duration = getSpbDuration() || video.duration
+        const actualDuration = Math.trunc(duration / rate)
+
+        updateCurrentTime(actualCurrentTime)
+        updateRemainingTime(actualCurrentTime, actualDuration)
+    }
     video.addEventListener('timeupdate', onTick)
 }
 
