@@ -1,3 +1,7 @@
+* Version 0.5.1
+
+- d287471 - Fix initial display of all values
+
 * Version 0.5
 
 - f11fc86 - Show a demo of the player in the options menu
