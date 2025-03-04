@@ -158,6 +158,8 @@ function clearGlobalInterval() {
 function init() {
     video = document.querySelector('video')
     if (!video) return
+    clearAll()
+    loadOptions()
 
     const onTick = () => {
         currentTime = video.currentTime
@@ -169,16 +171,15 @@ function init() {
         updateRemainingTime(actualCurrentTime, actualDuration)
     }
 
-    const onLoadedMetadata = () => {
-        clearAll()
-        loadOptions()
+    const reset = () => {
         onRateChange()
         onTick()
+        clearAll()
         show()
     }
 
-    video.addEventListener('loadedmetadata', onLoadedMetadata)
-    video.addEventListener('ratechange', onRateChange)
+    video.addEventListener('loadedmetadata', reset)
+    video.addEventListener('ratechange', reset)
 
     video.addEventListener('timeupdate', onTick)
 }
