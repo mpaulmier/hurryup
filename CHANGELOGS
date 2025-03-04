@@ -1,5 +1,6 @@
 * Version 0.5.1
 
+- a790e2f - Fix display when loading in a new, inactive tab
 - d287471 - Fix initial display of all values
 
 * Version 0.5
