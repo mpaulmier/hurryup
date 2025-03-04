@@ -20,7 +20,9 @@ const options = {
 }
 
 let video,
+    currentTime,
     showCurrentTime,
+    rate,
     showRate,
     globalInterval
 
@@ -84,9 +86,8 @@ function convertToHumanReadableTime(time) {
 }
 
 function onRateChange() {
-    const rate = video.playbackRate.toFixed(2)
+    rate = video.playbackRate.toFixed(2)
     const duration = getSpbDuration() || video.duration
-    clearAll()
 
     if (rate == 1) {
         clearGlobalInterval()
@@ -100,7 +101,6 @@ function onRateChange() {
     const newDurationText = convertToHumanReadableTime(newDuration)
 
     containers.duration.textContent = newDurationText
-    show()
 }
 
 function show() {
@@ -158,15 +158,9 @@ function clearGlobalInterval() {
 function init() {
     video = document.querySelector('video')
     if (!video) return
-    clearAll()
-    loadOptions()
-    onRateChange()
-
-    video.addEventListener('ratechange', onRateChange)
 
     const onTick = () => {
-        const rate = video.playbackRate.toFixed(2)
-        const currentTime = video.currentTime
+        currentTime = video.currentTime
         const actualCurrentTime = Math.trunc(currentTime / rate)
         const duration = getSpbDuration() || video.duration
         const actualDuration = Math.trunc(duration / rate)
@@ -174,6 +168,18 @@ function init() {
         updateCurrentTime(actualCurrentTime)
         updateRemainingTime(actualCurrentTime, actualDuration)
     }
+
+    const onLoadedMetadata = () => {
+        clearAll()
+        loadOptions()
+        onRateChange()
+        onTick()
+        show()
+    }
+
+    video.addEventListener('loadedmetadata', onLoadedMetadata)
+    video.addEventListener('ratechange', onRateChange)
+
     video.addEventListener('timeupdate', onTick)
 }
 
@@ -181,7 +187,7 @@ browser.runtime.onMessage.addListener((obj, _sender, _response) => {
     const { type } = obj
 
     if (type === 'videoPageLoaded') {
-        setTimeout(init, 2000) // Wait for YouTube to load
+        init()
     } else if (type === 'optionsUpdated') {
         loadOptions()
     }
