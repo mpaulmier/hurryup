@@ -1,3 +1,8 @@
+* Version 0.6
+
+- 391d0d0 - Add a popup menu
+- 215fdba - Make options menu look a bit slicker
+
 * Version 0.5.1
 
 - a790e2f - Fix display when loading in a new, inactive tab
