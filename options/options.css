@@ -1,27 +1,49 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #f9f9f9;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
     margin: 0;
+    color: #333;
 }
 
 .options-container {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 500px;
 }
 
-label {
-    display: block;
-    margin: 10px 0;
+h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #222;
 }
 
+label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #f4f4f4;
+    padding: 10px;
+    transition: background 0.2s ease-in-out;
+}
+
+label:hover {
+    background: #e0e0e0;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: #007bff;
+}
 
 .button {
     display: flex;
@@ -48,6 +70,7 @@ label {
     border-top: 3px solid red;
     width: 80%;
     margin: auto;
+    margin-top: 10px;
 }
 
 #time-container {
