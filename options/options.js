@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const showCurrentTimeCheckbox = document.getElementById('show-current-time-option')
     const showRemainingTimeCheckbox = document.getElementById('show-remaining-time-option')
     const showRateCheckbox = document.getElementById('show-rate-option')
-    const timeContainer = document.getElementById('time-container')
 
     browser.storage.local.get(['showCurrentTime', 'showRemainingTime', 'showRate'], (result) => {
         showCurrentTimeCheckbox.checked = !!result.showCurrentTime
