@@ -41,5 +41,13 @@
         },
         "default_title": "HurryUp",
         "default_popup": "options/options.html"
+    },
+    "sidebar_action": {
+        "default_icon": {
+            "16": "assets/images/icon_16.png",
+            "32": "assets/images/icon_32.png"
+        },
+        "default_title": "HurryUp",
+        "default_panel": "options/options.html"
     }
 }
