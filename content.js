@@ -36,24 +36,10 @@ const containers = {
 function hideSpbContainerMaybe(rate) {
     const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
     if (rate != 1 && !!spbElem && !!spbElem.textContent) {
-        duration = getSpbDuration(spbElem)
         spbElem.style.display = 'none'
     } else if (!!spbElem) {
         spbElem.style.display = 'inline'
     }
-}
-
-function getSpbDuration() {
-    // factors for each element [ seconds, minutes, hours ]
-    const timeMapping = [1, 60, 3600]
-
-    const spbElem = document.getElementById('sponsorBlockDurationAfterSkips')
-    if (!spbElem || !spbElem.textContent) return null
-    const [_, timeStr] = spbElem.textContent.match(/\ \((.*)\)/)
-
-    // split and reverse into [ seconds, minutes, hours ]
-    const timeElems = timeStr.split(':').map(Number).reverse()
-    return timeElems.reduce((acc, elem, idx) => acc + elem * timeMapping[idx], 0)
 }
 
 function createElement(id) {
@@ -87,7 +73,7 @@ function convertToHumanReadableTime(time) {
 
 function onRateChange() {
     rate = video.playbackRate.toFixed(2)
-    const duration = getSpbDuration() || video.duration
+    const duration = video.duration
 
     if (rate == 1) {
         clearGlobalInterval()
@@ -164,7 +150,7 @@ function init() {
     const onTick = () => {
         currentTime = video.currentTime
         const actualCurrentTime = Math.trunc(currentTime / rate)
-        const duration = getSpbDuration() || video.duration
+        const duration = video.duration
         const actualDuration = Math.trunc(duration / rate)
 
         updateCurrentTime(actualCurrentTime)
